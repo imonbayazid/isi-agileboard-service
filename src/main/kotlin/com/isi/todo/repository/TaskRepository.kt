@@ -1,4 +1,8 @@
 package com.isi.todo.repository
 
-interface TaskRepository {
+import com.isi.todo.db.model.Task
+import org.springframework.data.jpa.repository.JpaRepository
+import java.util.*
+
+interface TaskRepository : JpaRepository<Task, UUID> {
 }
