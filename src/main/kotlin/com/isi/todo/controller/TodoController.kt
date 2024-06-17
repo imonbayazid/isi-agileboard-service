@@ -23,12 +23,4 @@ class TodoController(
         return "testing.."
     }
 
-
-    @PostMapping("/webhooks/user-deleted")
-    fun handleUserDeleted(@RequestBody payload: UserWebhookPayload): ResponseEntity<ApiResponse> {
-        val id= UUID.fromString(payload.data.user)
-       // boardService.deleteTasksByUserId(id)
-        return ResponseHandler.generateResponse(HttpStatus.OK, null, true)
-    }
-
 }
