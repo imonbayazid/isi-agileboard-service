@@ -4,7 +4,6 @@ import com.isi.todo.client.userService.UserDetailsService
 import com.isi.todo.core.ResourceNotFoundException
 import com.isi.todo.db.entity.Board
 import com.isi.todo.db.entity.Task
-import com.isi.todo.db.model.BoardProjection
 import com.isi.todo.dto.BoardDto
 import com.isi.todo.dto.BoardResponse
 import com.isi.todo.dto.TaskResponse
@@ -48,10 +47,4 @@ class BoardService(
         boardRepository.deleteById(id)
     }
 
-   /* @Transactional
-    fun handleUserDeleted(userId: UUID) {
-        // delete all tasks of that user
-        val tasks = taskRepository.findAllByUser(userId)
-        taskRepository.deleteAll(tasks)
-    } */
 }

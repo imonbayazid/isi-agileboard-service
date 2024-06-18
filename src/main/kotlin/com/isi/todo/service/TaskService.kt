@@ -3,7 +3,6 @@ package com.isi.todo.service
 import com.isi.todo.core.ResourceNotFoundException
 import com.isi.todo.db.entity.Board
 import com.isi.todo.db.entity.Task
-import com.isi.todo.db.model.BoardProjection
 import com.isi.todo.db.model.TaskStatus
 import com.isi.todo.dto.TaskDto
 import com.isi.todo.repository.BoardRepository
