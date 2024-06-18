@@ -6,6 +6,7 @@ import com.isi.todo.db.entity.Board
 import com.isi.todo.db.entity.Task
 import com.isi.todo.dto.BoardDto
 import com.isi.todo.dto.BoardResponse
+import com.isi.todo.dto.TaskDto
 import com.isi.todo.dto.TaskResponse
 import com.isi.todo.repository.BoardRepository
 import com.isi.todo.repository.TaskRepository
@@ -19,25 +20,30 @@ class BoardService(
     private val userDetailsService: UserDetailsService
 ) {
 
+    // <editor-fold desc="public section">
     fun getAllBoards(): List<BoardDto> {
-        return boardRepository.findAll().map { board ->
-            BoardDto(id = board.id, name = board.name, description = board.description)
-        }
+        return boardRepository.findAll().map { it.toDto() }
     }
-    fun createBoard(name: String, description: String?): BoardDto {
-        val board = Board(name = name, description = description)
-        val savedBoard = boardRepository.save(board)
-        return BoardDto(id = savedBoard.id, name = savedBoard.name, description = savedBoard.description)
+
+    fun createBoard(boardDto: BoardDto): BoardDto {
+        val board = Board(name = boardDto.name, description = boardDto.description)
+        return boardRepository.save(board).toDto()
     }
 
     fun getBoardById(id: UUID): BoardResponse {
-           val board = boardRepository.findById(id)
-               .orElseThrow { NoSuchElementException("Board not found") }
-           val tasksWithUserDetails = board.tasks.map { task ->
-               val userResponse = userDetailsService.getUserDetails() // get random user details
-               TaskResponse(task.id, task.name, task.description, task.status, userResponse?.results?.firstOrNull()?.toUser())
-           }
-           return BoardResponse(board.id, board.name, board.description, tasksWithUserDetails)
+        val board = boardRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Board not found") }
+        val tasksWithUserDetails = board.tasks.map { task ->
+            val userResponse = userDetailsService.getUserDetails() // get random user details
+            TaskResponse(
+                task.id,
+                task.name,
+                task.description,
+                task.status,
+                userResponse?.results?.firstOrNull()?.toUser()
+            )
+        }
+        return BoardResponse(board.id, board.name, board.description, tasksWithUserDetails)
     }
 
     fun deleteBoard(id: UUID) {
@@ -46,5 +52,10 @@ class BoardService(
         }
         boardRepository.deleteById(id)
     }
+    // </editor-fold>
+
+    // <editor-fold desc="private section">
+    private fun Board.toDto() = BoardDto(id, name, description)
+    // </editor-fold>
 
 }

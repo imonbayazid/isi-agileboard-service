@@ -13,7 +13,8 @@ import java.util.*
 @RestController
 @RequestMapping("/api/v1")
 class BoardController(
-    private val boardService: BoardService ) {
+    private val boardService: BoardService
+) {
 
     @GetMapping("/boards")
     fun getAllBoards(): ResponseEntity<ApiResponse> {
@@ -23,7 +24,7 @@ class BoardController(
 
     @PostMapping("/boards")
     fun createBoard(@RequestBody boardDto: BoardDto): ResponseEntity<ApiResponse> {
-        val createdBoard = boardService.createBoard(boardDto.name, boardDto.description)
+        val createdBoard = boardService.createBoard(boardDto)
         return ResponseHandler.generateResponse(HttpStatus.CREATED, createdBoard, true)
     }
 
@@ -32,7 +33,7 @@ class BoardController(
     fun getBoard(@PathVariable id: String): ResponseEntity<ApiResponse> {
         val boardId = UUID.fromString(id)
         val res = boardService.getBoardById(boardId)
-         return ResponseHandler.generateResponse(HttpStatus.OK, res, true)
+        return ResponseHandler.generateResponse(HttpStatus.OK, res, true)
     }
 
     @DeleteMapping("/boards/{id}")

@@ -22,20 +22,19 @@ class TaskController(
     @GetMapping("/boards/{id}/tasks")
     fun getAllTasks(@PathVariable id: String): ResponseEntity<ApiResponse> {
         val boardId = UUID.fromString(id)
-        val tasks = taskService.getTask(boardId)
+        val tasks = taskService.getTasksByBoardId(boardId)
         return ResponseHandler.generateResponse(HttpStatus.OK, tasks, true)
     }
 
     @PostMapping("/boards/{id}/tasks")
     fun createTask(@PathVariable id: String, @RequestBody taskDto: TaskDto): ResponseEntity<ApiResponse> {
         val boardId = UUID.fromString(id)
-        val userId = UUID.fromString(taskDto.userId)
-        val createdTask = taskService.createTask(boardId, taskDto.name!!, taskDto.description, userId )
+        val createdTask = taskService.createTask(boardId, taskDto)
         return ResponseHandler.generateResponse(HttpStatus.CREATED, createdTask, true)
     }
 
     @PutMapping("/tasks/{id}")
-    fun updateTask(@PathVariable id: String, @RequestBody task: TaskDto) : ResponseEntity<ApiResponse> {
+    fun updateTask(@PathVariable id: String, @RequestBody task: TaskDto): ResponseEntity<ApiResponse> {
         val taskId = UUID.fromString(id)
         val updatedTask = taskService.updateTask(taskId, task)
         return ResponseHandler.generateResponse(HttpStatus.OK, updatedTask, true)
@@ -49,7 +48,7 @@ class TaskController(
     }
 
     @DeleteMapping("/tasks/{id}")
-    fun deleteTask(@PathVariable id: String) : ResponseEntity<ApiResponse> {
+    fun deleteTask(@PathVariable id: String): ResponseEntity<ApiResponse> {
         val taskId = UUID.fromString(id)
         taskService.deleteTask(taskId)
         return ResponseHandler.generateResponse(HttpStatus.OK, null, true)

@@ -15,40 +15,53 @@ import java.util.*
 @Service
 class TaskService(private val boardRepository: BoardRepository, private val taskRepository: TaskRepository) {
 
-    fun getBoard(id: UUID): Board = boardRepository.findById(id).orElseThrow { NoSuchElementException("Board not found") }
+    // <editor-fold desc="public section">
+    fun getBoardById(id: UUID): Board =
+        boardRepository.findById(id).orElseThrow { NoSuchElementException("Board not found") }
 
-    fun getTask(id: UUID): Task = taskRepository.findById(id).orElseThrow { NoSuchElementException("Task not found") }
+    fun getTaskById(id: UUID): Task =
+        taskRepository.findById(id).orElseThrow { NoSuchElementException("Task not found") }
+
+    fun getTasksByBoardId(boardId: UUID): List<TaskDto> {
+        val board = getBoardById(boardId)
+        return board.tasks.map { it.toDto() }
+    }
 
     @Transactional
-    fun createTask(boardId: UUID, name: String, description: String?, user: UUID): TaskDto {
-        val board = getBoard(boardId)  // ???
-        val task = Task(name = name, description = description, userId = user, board = board)
+    fun createTask(boardId: UUID, taskDto: TaskDto): TaskDto {
+        val board = getBoardById(boardId)
+        val task = Task(
+            name = taskDto.name!!,
+            description = taskDto.description,
+            userId = UUID.fromString(taskDto.userId),
+            board = board
+        )
         board.tasks.add(task)
-        boardRepository.save(board) // ?
-        /// this save operation will also persist the new task to the database due to the cascading settings (if any) defined on the tasks relationship in the Board entity.
-        return TaskDto(id = task.id, name = task.name, description = task.description, userId = task.userId.toString(), status = task.status)
+        boardRepository.save(board)
+        return task.toDto()
     }
 
-
-    fun updateTask(taskId: UUID, task: TaskDto): TaskDto {
-        val existingTask = taskRepository.findById(taskId).orElseThrow { NoSuchElementException("Task not found") }
-        val updatedTask = existingTask.copy(name = task.name!!, description = task.description, userId = UUID.fromString(task.userId), status = task.status!!)
-        val res = taskRepository.save(updatedTask)
-        return TaskDto(id = res.id, name = res.name, description = res.description, userId = res.userId.toString(), status = res.status)
-    }
-
-    fun patchTask(taskId: UUID, task: TaskDto): TaskDto? {
-        val existingTask = taskRepository.findById(taskId).orElseThrow { NoSuchElementException("Task not found") }
+    fun updateTask(taskId: UUID, taskDto: TaskDto): TaskDto {
+        val existingTask = getTaskById(taskId)
         val updatedTask = existingTask.copy(
-            name = task.name ?: existingTask.name,
-            description = task.description ?: existingTask.description,
-            userId = task.userId?.let { UUID.fromString(it) } ?: existingTask.userId,
-            status = task.status ?: existingTask.status)
-        taskRepository.save(updatedTask)
-        return TaskDto(id = updatedTask.id, name = updatedTask.name, description = updatedTask.description, userId = updatedTask.userId.toString(), status = updatedTask.status)
+            name = taskDto.name!!,
+            description = taskDto.description,
+            userId = UUID.fromString(taskDto.userId),
+            status = taskDto.status!!
+        )
+        return taskRepository.save(updatedTask).toDto()
     }
 
-
+    fun patchTask(taskId: UUID, taskDto: TaskDto): TaskDto {
+        val existingTask = getTaskById(taskId)
+        val updatedTask = existingTask.copy(
+            name = taskDto.name ?: existingTask.name,
+            description = taskDto.description ?: existingTask.description,
+            userId = taskDto.userId?.let { UUID.fromString(it) } ?: existingTask.userId,
+            status = taskDto.status ?: existingTask.status
+        )
+        return taskRepository.save(updatedTask).toDto()
+    }
 
     fun deleteTask(taskId: UUID) {
         if (!taskRepository.existsById(taskId)) {
@@ -59,10 +72,14 @@ class TaskService(private val boardRepository: BoardRepository, private val task
 
     fun deleteTasksByUserId(userId: UUID) {
         val tasks = taskRepository.findAllByUserId(userId)
-        if(tasks.isEmpty()) {
+        if (tasks.isEmpty()) {
             throw ResourceNotFoundException("Task not found for the user id $userId")
         }
         taskRepository.deleteAll(tasks)
     }
+    // </editor-fold>
 
+    // <editor-fold desc="private section">
+    private fun Task.toDto() = TaskDto(id, name, description, userId.toString(), status)
+    // </editor-fold>
 }
