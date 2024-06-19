@@ -26,6 +26,21 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	runtimeOnly 'org.postgresql:postgresql'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// test related //
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	// Kotest dependencies
+	//testImplementation("io.kotest:kotest-core:4.1.3")
+	testImplementation("io.kotest:kotest-assertions-core:5.5.5")
+	testImplementation "io.kotest:kotest-property:5.5.5"
+	testImplementation("io.kotest:kotest-extensions-spring:4.4.3")
+	testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
+	// MockK for mocking
+	testImplementation("io.mockk:mockk:1.12.0")
+	// JUnit 5 for testing
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+
 }
 
 kotlin {
