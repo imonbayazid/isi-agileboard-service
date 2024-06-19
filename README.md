@@ -1,7 +1,7 @@
 # isi-agileboard-service
 
 
-### How to run
+### How to run the app
 docker-compose up -d  
 
 ### swagger-ui
