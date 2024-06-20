@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: jar
-          path: build/libs/app.jar
+          path: build/libs/todo-0.0.1-SNAPSHOT.jar
           if-no-files-found: error
 
   push-docker-image:
