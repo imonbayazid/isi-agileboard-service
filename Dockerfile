@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-alpine
+FROM openjdk:21-jdk-slim
 EXPOSE 8080:8080
 
 ENV APPLICATION_USER ktor
