@@ -1,8 +1,8 @@
-name: build & deploy dev
+name: build & deploy dev (ECR)
 on:
   push:
     branches:
-      - stop
+      - demo
 
 jobs:
   test:
