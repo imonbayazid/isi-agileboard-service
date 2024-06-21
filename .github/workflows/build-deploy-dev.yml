@@ -2,7 +2,7 @@ name: build & deploy dev (ECR)
 on:
   push:
     branches:
-      - demo
+      - stop
 
 jobs:
   test:
