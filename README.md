@@ -6,3 +6,6 @@ docker-compose up -d
 
 ### swagger-ui
 http://localhost:8080/swagger-ui/index.html
+
+### health check
+http://localhost:8080/actuator/health
